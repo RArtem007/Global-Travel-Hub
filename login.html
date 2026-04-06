@@ -120,7 +120,7 @@
     <button onclick="login()">Увійти</button>
 
     <div class="links">
-        <a onclick="showRegister()">Реєстрація</a>
+        <a onclick="toggleMode()" id="switchLink">Реєстрація</a>
         <a onclick="forgotPassword()">Забули пароль?</a>
     </div>
 
@@ -130,10 +130,18 @@
 
 let isRegister = false;
 
-function showRegister() {
-    document.getElementById("title").innerText = "Реєстрація";
-    document.querySelector("button").innerText = "Зареєструватися";
-    isRegister = true;
+function toggleMode() {
+    isRegister = !isRegister;
+
+    if (isRegister) {
+        document.getElementById("title").innerText = "Реєстрація";
+        document.querySelector("button").innerText = "Зареєструватися";
+        document.getElementById("switchLink").innerText = "Вже є акаунт? Увійти";
+    } else {
+        document.getElementById("title").innerText = "Вхід";
+        document.querySelector("button").innerText = "Увійти";
+        document.getElementById("switchLink").innerText = "Немає акаунта? Реєстрація";
+    }
 }
 
 function login() {
@@ -161,8 +169,11 @@ function login() {
         localStorage.setItem("users", JSON.stringify(users));
 
         alert("Реєстрація успішна!");
-        isRegister = false;
-        location.reload();
+
+        localStorage.setItem("currentUser", email);
+        
+        window.location.href = "index.html";
+
 
     } else {
         let user = users.find(u => u.email === email && u.password === password);

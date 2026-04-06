@@ -57,56 +57,8 @@
             color: #2c3e50;
         }
 
-        /* Форма пошуку */
-        form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        form input, form button {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        form button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        form button:hover {
-            background-color: #2980b9;
-        }
-
-        /* Картки турів */
-        .tours {
-            display: flex;
-            gap: 20px;
-        }
-
-        .tour {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            width: 30%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .tour:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-
-        .tour h3 {
-            margin-top: 0;
-            color: #3498db;
-        }
+       
+   
 
         /* Футер */
         footer {
@@ -144,9 +96,9 @@
         <h1>Travel System</h1>
     </div>
     <nav>
-        <a href="#">Головна</a>
+        <a href="index.html">Головна</a>
         <a href="tour.html">Тури</a>
-        <a href="b.html">Про нас</a>
+        <a href="#">Про нас</a>
         <a href="#">Контакти</a>
 
         <a href="login.html" class="login-btn" id="authBtn">Увійти</a>
@@ -154,39 +106,6 @@
 
     
 </header>   
-
-<div class="container">
-
-    <h2>Пошук туру</h2>
-    <form>
-        <input type="text" placeholder="Куди" required>
-        <input type="date" required>
-        <button type="submit">Знайти</button>
-    </form>
-
-    <h2>Популярні тури</h2>
-    <div class="tours">
-        <div class="tour">
-            <h3>Париж</h3>
-            <p>5 днів у Франції</p>
-            <p>Ціна: 500€</p>
-        </div>
-
-        <div class="tour">
-            <h3>Рим</h3>
-            <p>7 днів в Італії</p>
-            <p>Ціна: 650€</p>
-        </div>
-
-        <div class="tour">
-            <h3>Барселона</h3>
-            <p>6 днів в Іспанії</p>
-            <p>Ціна: 600€</p>
-        </div>
-    </div>
-
-</div>
-
 
 
 <footer>
