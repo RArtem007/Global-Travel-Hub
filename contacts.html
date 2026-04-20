@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Контакти</title>
+    <style>
+        /* Стилі для всього сайту */
+        body {
+            font-family: Arial, sans-serif; /* Шрифт тексту */
+            margin: 0; /* Прибирає стандартні відступи браузера */
+            background: #f5f5f5; /* Світло-сірий фон сторінки */
+        }
+
+        /* Основний контейнер сторінки */
+        .container {
+            max-width: 1000px; /* Максимальна ширина блоку */
+            margin: 40px auto; /* Відступ зверху/знизу 40px і авто по боках (центрування) */
+            background: white; /* Білий фон */
+            padding: 30px; /* Внутрішні відступи */
+            border-radius: 10px; /* Закруглені кути */
+        }
+
+        /* Заголовок h1 */
+        h1 {
+            text-align: center; /* Вирівнювання по центру */
+        }
+
+        /* Блок з контактами (info + form) */
+        .contacts {
+            display: flex; /* Робить елементи в ряд */
+            justify-content: space-between; /* Розтягує елементи по краях */
+            flex-wrap: wrap; /* Дозволяє перенос на новий рядок */
+        }
+
+        /* Два блоки: інформація і форма */
+        .info, .form {
+            width: 48%; /* Кожен займає приблизно половину ширини */
+        }
+
+        /* Абзаци в блоці контактів */
+        .info p {
+            margin: 10px 0; /* Відступ зверху і знизу */
+        }
+
+        /* Поля форми */
+        form input, form textarea {
+            width: 100%; /* На всю ширину контейнера */
+            padding: 10px; /* Внутрішній відступ */
+            margin-bottom: 10px; /* Відступ між полями */
+        }
+
+        /* Кнопка */
+        button {
+            padding: 10px 20px; /* Внутрішні відступи */
+            background: #2c6f97; /* Колір фону */
+            color: white; /* Колір тексту */
+            border: none; /* Без рамки */
+            cursor: pointer; /* Курсор "рука" при наведенні */
+        }
+
+        /* Карта (iframe) */
+        iframe {
+            width: 100%; /* На всю ширину */
+            height: 300px; /* Висота */
+            border: none; /* Без рамки */
+            margin-top: 20px; /* Відступ зверху */
+        }
+    </style>
+</head>
+<body>
+
+<div id="header"></div>
+<script>
+fetch('header.html').then(r=>r.text()).then(t=>document.getElementById('header').innerHTML=t);
+</script>
+
+<div class="container">
+    <h1>Контакти</h1>
+
+    <div class="contacts">
+        <div class="info">
+            <h3>Наші контакти</h3>
+            <p><strong>Адреса:</strong> -82.27788,87.3504245</p>
+            <p><strong>Телефон:</strong> +380 99 123 45 67</p>
+            <p><strong>Email:</strong> info@travelsystem.ua</p>
+            <p><strong>Графік роботи:</strong> Пн-Пт 9:00 - 18:00</p>
+        </div>
+
+        <div class="form">
+            <h3>Зв'яжіться з нами</h3>
+            <form>
+                <input type="text" placeholder="Ваше ім’я" required>
+                <input type="email" placeholder="Ваш email" required>
+                <textarea placeholder="Ваше повідомлення"></textarea>
+                <button type="submit">Надіслати</button>
+            </form>
+        </div>
+    </div>
+
+    <h3>Ми на карті</h3>
+    <iframe src="https://maps.google.com/maps?q=-82.27788,87.3504245&z=13&output=embed"></iframe>
+</div>
+
+<div id="footer"></div>
+<script>
+fetch('footer.html').then(r=>r.text()).then(t=>document.getElementById('footer').innerHTML=t);
+</script>
+
+</body>
+
+</html>

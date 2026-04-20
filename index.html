@@ -13,45 +13,7 @@
             color: #333;
         }
 
-        /* Стиль хедера */
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(90deg, #3498db, #2c3e50);
-            color: white;
-            padding: 15px 30px;
-        }
-
-        .logo {
-            width: 80px;
-            margin-right: 20px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-
-        /* Меню навігації */
-        nav a {
-            margin: 0 15px;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        nav a:hover {
-            color: #f1c40f;
-        }
-
-        /* Контейнер сторінки */
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            padding: 30px;
-        }
+        
 
         h2 {
             color: #2c3e50;
@@ -108,52 +70,15 @@
             color: #3498db;
         }
 
-        /* Футер */
-        footer {
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin-top: 30px;
-        }
-
-        /* Стиль для кнопки входу */
-        .login-btn {
-            color: white;
-            font-weight: bold;
-            text-decoration: none;
-            padding: 10px 20px;
-            background-color: #3498db;
-            border-radius: 5px;
-            transition: 0.3s;
-            margin-left: 30px; /* Для відступу від інших елементів */
-        }
-
-        .login-btn:hover {
-            background-color: #2980b9;
-        }
-        
     </style>
 
 </head>
-<body>
+<body> 
 
-<header>
-    <div style="display: flex; align-items: center;">
-        <img src="Photo/logo.png" alt="Логотип" class="logo">
-        <h1>Travel System</h1>
-    </div>
-    <nav>
-        <a href="#">Головна</a>
-        <a href="tour.html">Тури</a>
-        <a href="b.html">Про нас</a>
-        <a href="#">Контакти</a>
-
-        <a href="login.html" class="login-btn" id="authBtn">Увійти</a>
-    </nav>
-
-    
-</header>   
+<div id="header"></div>
+<script>
+fetch('header.html').then(r=>r.text()).then(t=>document.getElementById('header').innerHTML=t);
+</script>
 
 <div class="container">
 
@@ -188,12 +113,13 @@
 </div>
 
 
-
-<footer>
-    <p>© 2026 Туристична система | Всі права захищені</p>
-</footer>
+<div id="footer"></div>
+<script>
+fetch('footer.html').then(r=>r.text()).then(t=>document.getElementById('footer').innerHTML=t);
+</script>
 
 <script>
+
 let user = localStorage.getItem("currentUser");
 
 let btn = document.getElementById("authBtn");
