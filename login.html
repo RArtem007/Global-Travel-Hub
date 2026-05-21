@@ -9,104 +9,95 @@
 
         /* ===== СТОРІНКА (ФОН І ЦЕНТРУВАННЯ) ===== */
         body {
-            font-family: Arial, sans-serif; /* Шрифт */
-            background: #f4f6f8; /* Колір фону сторінки */
-    
-            display: flex; /* Включає flexbox */
-            justify-content: center; /* Центрує по горизонталі */
-            align-items: center; /* Центрує по вертикалі */
-    
-            height: 100vh; /* Висота на весь екран */
-            margin: 0; /* Прибирає стандартні відступи */
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
 
         /* ===== БІЛИЙ БЛОК (ФОРМА) ===== */
         .box {
-            background: white; /* Колір картки */
-            padding: 30px; /* Внутрішні відступи */
-            border-radius: 12px; /* Закруглення кутів */
-    
-            width: 320px; /* Ширина форми */
-    
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* Тінь */
-    
-            text-align: center; /* Вирівнює текст по центру */
-}
-
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 320px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            text-align: center;
+        }
 
         /* ===== ЗАГОЛОВОК ===== */
         h2 {
-            margin-bottom: 20px; /* Відступ вниз */
+            margin-bottom: 20px;
         }
-
 
         /* ===== ПОЛЯ ВВОДУ (EMAIL / ПАРОЛЬ) ===== */
         input {
-            width: 100%; /* На всю ширину контейнера */
-    
-            padding: 12px; /* Внутрішній відступ */
-            margin-bottom: 15px; /* Відступ між полями */
-    
-            border-radius: 6px; /* Закруглення */
-            border: 1px solid #ccc; /* Колір рамки */
-    
-            font-size: 14px; /* Розмір тексту */
-    
-            box-sizing: border-box; 
-            /* ВАЖЛИВО: щоб padding не ламав ширину */
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            box-sizing: border-box;
         }
-
 
         /* ===== КНОПКА ===== */
         button {
-            width: 100%; /* Ширина як у інпутів */
-    
-            padding: 12px; /* Розмір кнопки */
-    
-            background: #3498db; /* Колір кнопки */
-            color: white; /* Колір тексту */
-    
-            border: none; /* Без рамки */
-            border-radius: 6px; /* Закруглення */
-    
-            font-size: 16px; /* Розмір тексту */
-    
-            cursor: pointer; /* Курсор рукою */
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
         }
-
 
         /* ===== ЕФЕКТ ПРИ НАВЕДЕННІ ===== */
         button:hover {
-            background: #2980b9; /* Темніша кнопка */
+            background: #2980b9;
         }
 
+        button:disabled {
+            background: #aaa;
+            cursor: default;
+        }
 
         /* ===== БЛОК З ПОСИЛАННЯМИ ===== */
         .links {
-            margin-top: 15px; /* Відступ зверху */
+            margin-top: 15px;
         }
-
 
         /* ===== ПОСИЛАННЯ (РЕЄСТРАЦІЯ / ЗАБУЛИ ПАРОЛЬ) ===== */
         .links a {
-            display: block; /* Кожне з нового рядка */
-    
-            margin-top: 8px; /* Відступ між ними */
-    
-            color: #3498db; /* Колір тексту */
-            text-decoration: none; /* Без підкреслення */
-    
-            font-size: 14px; /* Розмір тексту */
+            display: block;
+            margin-top: 8px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
         }
-
 
         /* ===== ЕФЕКТ НАВЕДЕННЯ НА ПОСИЛАННЯ ===== */
         .links a:hover {
-            text-decoration: underline; /* Підкреслення при наведенні */
+            text-decoration: underline;
         }
 
-</style>
+        /* ===== ПОВІДОМЛЕННЯ ПРО ПОМИЛКУ/УСПІХ ===== */
+        .msg {
+            font-size: 13px;
+            margin-bottom: 10px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            display: none;
+        }
+        .msg.error   { background: #fdecea; color: #c0392b; display: block; }
+        .msg.success { background: #eafaf1; color: #1e8449; display: block; }
+
+    </style>
 </head>
 
 <body>
@@ -115,10 +106,12 @@
 
     <h2 id="title">Вхід</h2>
 
+    <div class="msg" id="msg"></div>
+
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Пароль">
 
-    <button onclick="login()">Увійти</button>
+    <button id="submitBtn" onclick="handleSubmit()">Увійти</button>
 
     <div class="links">
         <a onclick="toggleMode()" id="switchLink">Реєстрація</a>
@@ -127,79 +120,129 @@
 
 </div>
 
-<script>
+<script type="module">
+// ===== SUPABASE =====
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const supabase = createClient(
+  'https://njzygyuxisnstpydadsz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qenlneXV4aXNuc3RweWRhZHN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NzM2NzQsImV4cCI6MjA5MjI0OTY3NH0.luEnVp7CeSVIQtu7hS80SOokMIi8JvXj-EX4aM5xwRE'
+);
+// ===== КІНЕЦЬ SUPABASE =====
 
 let isRegister = false;
 
-function toggleMode() {
-    isRegister = !isRegister;
-
-    if (isRegister) {
-        document.getElementById("title").innerText = "Реєстрація";
-        document.querySelector("button").innerText = "Зареєструватися";
-        document.getElementById("switchLink").innerText = "Вже є акаунт? Увійти";
-    } else {
-        document.getElementById("title").innerText = "Вхід";
-        document.querySelector("button").innerText = "Увійти";
-        document.getElementById("switchLink").innerText = "Немає акаунта? Реєстрація";
-    }
+function showMsg(text, type) {
+    const el = document.getElementById('msg');
+    el.textContent = text;
+    el.className = 'msg ' + type;
 }
 
-async function login() {
-    if (!validateLoginForm(isRegister)) return;
-    let email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+function hideMsg() {
+    const el = document.getElementById('msg');
+    el.className = 'msg';
+}
 
-    if (!email || !password) { alert("Заповніть всі поля!"); return; }
+function setLoading(on) {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = on;
+    btn.textContent = on
+        ? (isRegister ? 'Реєстрація...' : 'Вхід...')
+        : (isRegister ? 'Зареєструватися' : 'Увійти');
+}
 
-    if (!isRegister) {
+window.toggleMode = function() {
+    isRegister = !isRegister;
+    hideMsg();
+
+    if (isRegister) {
+        document.getElementById('title').innerText = 'Реєстрація';
+        document.getElementById('submitBtn').innerText = 'Зареєструватися';
+        document.getElementById('switchLink').innerText = 'Вже є акаунт? Увійти';
+    } else {
+        document.getElementById('title').innerText = 'Вхід';
+        document.getElementById('submitBtn').innerText = 'Увійти';
+        document.getElementById('switchLink').innerText = 'Немає акаунта? Реєстрація';
+    }
+};
+
+window.handleSubmit = async function() {
+    // Валідація через існуючий validation.js (якщо є)
+    if (typeof validateLoginForm === 'function' && !validateLoginForm(isRegister)) return;
+
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) { showMsg('Заповніть всі поля!', 'error'); return; }
+
+    hideMsg();
+    setLoading(true);
+
+    if (isRegister) {
+        // ===== РЕЄСТРАЦІЯ через Supabase Auth =====
+        const { data, error } = await supabase.auth.signUp({ email, password });
+
+        if (error) {
+            showMsg(error.message === 'User already registered'
+                ? 'Користувач вже існує!'
+                : error.message, 'error');
+            setLoading(false);
+            return;
+        }
+
+        // Якщо email-підтвердження вимкнено — одразу редірект
+        if (data.session) {
+            window.location.href = 'index.html';
+        } else {
+            showMsg('Реєстрація успішна! Перевірте пошту для підтвердження.', 'success');
+            setLoading(false);
+        }
+
+    } else {
+        // ===== ВХІД через Supabase Auth =====
+
+        // Перевірка адміна (залишена як була — через admins.json)
         try {
             const resp = await fetch('admins.json');
             const admins = await resp.json();
             const admin = admins.find(a => a.email === email && a.password === password);
             if (admin) {
-                localStorage.setItem("currentUser", email);
-                localStorage.setItem("isAdmin", "true");
-                window.location.href = "index.html";
+                localStorage.setItem('currentUser', email);
+                localStorage.setItem('isAdmin', 'true');
+                window.location.href = 'index.html';
                 return;
             }
-        } catch(e) {}
-    }
+        } catch(e) { /* admins.json не знайдено — пропускаємо */ }
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    if (isRegister) {
-        if (users.find(u => u.email === email)) { alert("Користувач вже існує!"); return; }
-        users.push({ email, password });
-        localStorage.setItem("users", JSON.stringify(users));
-        localStorage.setItem("currentUser", email);
-        localStorage.removeItem("isAdmin");
-        window.location.href = "index.html";
-    } else {
-        const user = users.find(u => u.email === email && u.password === password);
-        if (user) {
-            localStorage.setItem("currentUser", email);
-            localStorage.removeItem("isAdmin");
-            window.location.href = "index.html";
-        } else {
-            alert("Невірний email або пароль!");
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            showMsg('Невірний email або пароль!', 'error');
+            setLoading(false);
+            return;
         }
+
+        // Зберігаємо email у localStorage для сумісності з рештою сайту
+        localStorage.setItem('currentUser', data.user.email);
+        localStorage.removeItem('isAdmin');
+        window.location.href = 'index.html';
     }
-}
+};
 
-function forgotPassword() {
-    let email = prompt("Введіть ваш email:");
+window.forgotPassword = async function() {
+    const email = prompt('Введіть ваш email:');
+    if (!email) return;
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+    // ===== ЗМІНЕНО: Supabase надсилає лист для скидання пароля =====
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password.html'
+    });
 
-    let user = users.find(u => u.email === email);
-
-    if (user) {
-        alert("Ваш пароль: " + user.password);
+    if (error) {
+        alert('Помилка: ' + error.message);
     } else {
-        alert("Користувача не знайдено");
+        alert('Лист для скидання пароля надіслано на ' + email);
     }
-}
-
+};
 </script>
 
 </body>
