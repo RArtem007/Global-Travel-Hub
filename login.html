@@ -96,7 +96,7 @@ window.handleSubmit = async function() {
 
         // Крок 2: вставляємо в таблицю users з user_id від Auth
         const userId = data.user.id;
-        await supabase.from('users').insert({ user_id: userId, email });
+        await supabase.from('user_credentials').insert({ user_id: userId, email });
 
         // Зберігаємо сесію
         localStorage.setItem('currentUser', email);
