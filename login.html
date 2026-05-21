@@ -4,130 +4,42 @@
     <meta charset="UTF-8">
     <script src="JS/validation.js"></script>
     <title>Вхід</title>
-
     <style>
-
-        /* ===== СТОРІНКА (ФОН І ЦЕНТРУВАННЯ) ===== */
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        /* ===== БІЛИЙ БЛОК (ФОРМА) ===== */
-        .box {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 320px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            text-align: center;
-        }
-
-        /* ===== ЗАГОЛОВОК ===== */
-        h2 {
-            margin-bottom: 20px;
-        }
-
-        /* ===== ПОЛЯ ВВОДУ (EMAIL / ПАРОЛЬ) ===== */
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-
-        /* ===== КНОПКА ===== */
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        /* ===== ЕФЕКТ ПРИ НАВЕДЕННІ ===== */
-        button:hover {
-            background: #2980b9;
-        }
-
-        button:disabled {
-            background: #aaa;
-            cursor: default;
-        }
-
-        /* ===== БЛОК З ПОСИЛАННЯМИ ===== */
-        .links {
-            margin-top: 15px;
-        }
-
-        /* ===== ПОСИЛАННЯ (РЕЄСТРАЦІЯ / ЗАБУЛИ ПАРОЛЬ) ===== */
-        .links a {
-            display: block;
-            margin-top: 8px;
-            color: #3498db;
-            text-decoration: none;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        /* ===== ЕФЕКТ НАВЕДЕННЯ НА ПОСИЛАННЯ ===== */
-        .links a:hover {
-            text-decoration: underline;
-        }
-
-        /* ===== ПОВІДОМЛЕННЯ ПРО ПОМИЛКУ/УСПІХ ===== */
-        .msg {
-            font-size: 13px;
-            margin-bottom: 10px;
-            padding: 8px 10px;
-            border-radius: 6px;
-            display: none;
-        }
+        body { font-family: Arial, sans-serif; background: #f4f6f8; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: white; padding: 30px; border-radius: 12px; width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-align: center; }
+        h2 { margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        button:disabled { background: #aaa; cursor: default; }
+        .links { margin-top: 15px; }
+        .links a { display: block; margin-top: 8px; color: #3498db; text-decoration: none; font-size: 14px; cursor: pointer; }
+        .links a:hover { text-decoration: underline; }
+        .msg { font-size: 13px; margin-bottom: 10px; padding: 8px 10px; border-radius: 6px; display: none; }
         .msg.error   { background: #fdecea; color: #c0392b; display: block; }
         .msg.success { background: #eafaf1; color: #1e8449; display: block; }
-
     </style>
 </head>
-
 <body>
 
 <div class="box">
-
     <h2 id="title">Вхід</h2>
-
     <div class="msg" id="msg"></div>
-
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Пароль">
-
     <button id="submitBtn" onclick="handleSubmit()">Увійти</button>
-
     <div class="links">
         <a onclick="toggleMode()" id="switchLink">Реєстрація</a>
         <a onclick="forgotPassword()">Забули пароль?</a>
     </div>
-
 </div>
 
 <script type="module">
-// ===== SUPABASE =====
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 const supabase = createClient(
   'https://njzygyuxisnstpydadsz.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qenlneXV4aXNuc3RweWRhZHN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NzM2NzQsImV4cCI6MjA5MjI0OTY3NH0.luEnVp7CeSVIQtu7hS80SOokMIi8JvXj-EX4aM5xwRE'
 );
-// ===== КІНЕЦЬ SUPABASE =====
 
 let isRegister = false;
 
@@ -136,12 +48,7 @@ function showMsg(text, type) {
     el.textContent = text;
     el.className = 'msg ' + type;
 }
-
-function hideMsg() {
-    const el = document.getElementById('msg');
-    el.className = 'msg';
-}
-
+function hideMsg() { document.getElementById('msg').className = 'msg'; }
 function setLoading(on) {
     const btn = document.getElementById('submitBtn');
     btn.disabled = on;
@@ -150,10 +57,15 @@ function setLoading(on) {
         : (isRegister ? 'Зареєструватися' : 'Увійти');
 }
 
+async function hashPassword(password) {
+    const enc = new TextEncoder().encode(password);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
 window.toggleMode = function() {
     isRegister = !isRegister;
     hideMsg();
-
     if (isRegister) {
         document.getElementById('title').innerText = 'Реєстрація';
         document.getElementById('submitBtn').innerText = 'Зареєструватися';
@@ -166,63 +78,75 @@ window.toggleMode = function() {
 };
 
 window.handleSubmit = async function() {
-    // Валідація через існуючий validation.js (якщо є)
     if (typeof validateLoginForm === 'function' && !validateLoginForm(isRegister)) return;
 
     const email    = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
-
     if (!email || !password) { showMsg('Заповніть всі поля!', 'error'); return; }
 
     hideMsg();
     setLoading(true);
 
-    if (isRegister) {
-        // ===== РЕЄСТРАЦІЯ через Supabase Auth =====
-        const { data, error } = await supabase.auth.signUp({ email, password });
+    const passHash = await hashPassword(password);
 
-        if (error) {
-            showMsg(error.message === 'User already registered'
-                ? 'Користувач вже існує!'
-                : error.message, 'error');
+    if (isRegister) {
+        // Перевіряємо чи email вже є
+        const { data: existing } = await supabase
+            .from('users')
+            .select('user_id')
+            .eq('email', email)
+            .maybeSingle();
+
+        if (existing) {
+            showMsg('Користувач вже існує!', 'error');
             setLoading(false);
             return;
         }
 
-        // Якщо email-підтвердження вимкнено — одразу редірект
-        if (data.session) {
-            window.location.href = 'index.html';
-        } else {
-            showMsg('Реєстрація успішна! Перевірте пошту для підтвердження.', 'success');
+        // Додаємо нового користувача
+        const { error } = await supabase
+            .from('users')
+            .insert({ email, password_hash: passHash });
+
+        if (error) {
+            showMsg('Помилка реєстрації: ' + error.message, 'error');
             setLoading(false);
+            return;
         }
 
-    } else {
-        // ===== ВХІД через Supabase Auth =====
+        localStorage.setItem('currentUser', email);
+        localStorage.removeItem('isAdmin');
+        window.location.href = 'index.html';
 
-        // Перевірка адміна (залишена як була — через admins.json)
+    } else {
+        // Перевірка адміна через admins.json
         try {
-            const resp = await fetch('admins.json');
+            const resp  = await fetch('admins.json');
             const admins = await resp.json();
-            const admin = admins.find(a => a.email === email && a.password === password);
+            const admin  = admins.find(a => a.email === email && a.password === password);
             if (admin) {
                 localStorage.setItem('currentUser', email);
                 localStorage.setItem('isAdmin', 'true');
                 window.location.href = 'index.html';
                 return;
             }
-        } catch(e) { /* admins.json не знайдено — пропускаємо */ }
+        } catch(e) {}
 
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        // Шукаємо в таблиці users
+        const { data: user } = await supabase
+            .from('users')
+            .select('user_id, email')
+            .eq('email', email)
+            .eq('password_hash', passHash)
+            .maybeSingle();
 
-        if (error) {
+        if (!user) {
             showMsg('Невірний email або пароль!', 'error');
             setLoading(false);
             return;
         }
 
-        // Зберігаємо email у localStorage для сумісності з рештою сайту
-        localStorage.setItem('currentUser', data.user.email);
+        localStorage.setItem('currentUser', user.email);
         localStorage.removeItem('isAdmin');
         window.location.href = 'index.html';
     }
@@ -232,15 +156,27 @@ window.forgotPassword = async function() {
     const email = prompt('Введіть ваш email:');
     if (!email) return;
 
-    // ===== ЗМІНЕНО: Supabase надсилає лист для скидання пароля =====
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/reset-password.html'
-    });
+    const { data: user } = await supabase
+        .from('users')
+        .select('user_id')
+        .eq('email', email)
+        .maybeSingle();
+
+    if (!user) { alert('Користувача з таким email не знайдено.'); return; }
+
+    const newPass = prompt('Введіть новий пароль:');
+    if (!newPass) return;
+
+    const newHash = await hashPassword(newPass);
+    const { error } = await supabase
+        .from('users')
+        .update({ password_hash: newHash })
+        .eq('email', email);
 
     if (error) {
         alert('Помилка: ' + error.message);
     } else {
-        alert('Лист для скидання пароля надіслано на ' + email);
+        alert('Пароль успішно змінено! Тепер увійдіть з новим паролем.');
     }
 };
 </script>
