@@ -2,120 +2,513 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Туристична система</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel System</title>
 
-    <style>
-        /* Загальні стилі */
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            background-color: #f4f6f8;
-            color: #333;
-        }
+    <script src="JS/api.js"></script>
+    <script src="JS/ui.js"></script>
+    <link rel="stylesheet" href="style.css">
 
-        
 
-        h2 {
-            color: #2c3e50;
-        }
+<style>
 
-        /* Форма пошуку */
-        form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
 
-        form input, form button {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
+/* Загальні стилі сторінки */
+body{
+    font-family:'Poppins', sans-serif; /* шрифт сторінки */
+    background:#f4f7fb; /* світлий фон */
+    color:#1a1a1a; /* основний колір тексту */
+    overflow-x:hidden; /* прибирає горизонтальний скрол */
+}
 
-        form button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+/* ===== HERO (головний блок зверху) ===== */
+.hero{
 
-        form button:hover {
-            background-color: #2980b9;
-        }
+    height:92vh; /* висота майже весь екран */
 
-        /* Картки турів */
-        .tours {
-            display: flex;
-            gap: 20px;
-        }
+    /* фон складається з градієнта + картинки */
+    background:
+    linear-gradient(
+        to bottom,
+        rgba(8,40,80,0.72), /* затемнення зверху */
+        rgba(0,0,0,0.45)    /* затемнення знизу */
+    ),
 
-        .tour {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            width: 30%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
+    url('Photo/Fon.png'); /* фонова картинка */
 
-        .tour:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
+    background-size:cover; /* картинка заповнює весь блок */
+    background-position:center; /* центрування картинки */
 
-        .tour h3 {
-            margin-top: 0;
-            color: #3498db;
-        }
+    display:flex; /* включає flex-розміщення */
+    align-items: flex-start;
+    padding: 120px 90px 0;   
 
-    </style>
+    position:relative; /* потрібно для псевдоелементів */
+    overflow:hidden; /* обрізає зайве */
+}
+
+/* ===== HERO контент (текст у центрі) ===== */
+.hero-content{
+
+    max-width:720px; /* обмеження ширини тексту */
+
+    color:white; /* білий текст */
+
+    position:relative;
+    z-index:2; /* щоб текст був поверх ефектів */
+}
+
+/* Заголовок */
+.hero-content h1{
+
+    font-size:88px; /* великий заголовок */
+    line-height:1.05; /* щільні рядки */
+    margin-bottom:25px; /* відступ вниз */
+    font-weight:800; /* жирний текст */
+}
+
+/* Виділений текст */
+.hero-content span{
+    color:#52b6ff; /* блакитний акцент */
+}
+
+/* Опис */
+.hero-content p{
+
+    font-size:20px;
+    line-height:1.8;
+    margin-bottom:45px;
+    max-width:620px;
+    opacity:0.95; /* трохи прозорий текст */
+}
+
+/* ===== КНОПКИ ===== */
+.hero-buttons{
+
+    display:flex; /* кнопки в ряд */
+    gap:20px; /* відстань між кнопками */
+    flex-wrap:wrap; /* перенос на малих екранах */
+}
+
+/* базова кнопка */
+.btn{
+    text-decoration:none; /* прибрати підкреслення */
+    padding:17px 36px;
+    border-radius:50px; /* круглі краї */
+    font-weight:600;
+    transition:0.35s; /* плавні анімації */
+}
+
+/* основна кнопка */
+.btn-primary{
+
+    background:linear-gradient(135deg,#1e90ff,#38b6ff);
+    color:white;
+    box-shadow:0 12px 25px rgba(30,144,255,0.35);
+}
+
+/* hover ефект основної кнопки */
+.btn-primary:hover{
+    transform:translateY(-5px) scale(1.02);
+}
+
+/* другорядна кнопка */
+.btn-secondary{
+
+    border:2px solid rgba(255,255,255,0.75);
+    color:white;
+    backdrop-filter:blur(10px); /* розмиття фону */
+}
+
+/* hover для вторинної кнопки */
+.btn-secondary:hover{
+    background:white;
+    color:#111;
+}
+
+/* ===== FEATURES (блок переваг) ===== */
+.hero-features{
+
+    width:88%;
+    max-width:1250px;
+    margin:-55px auto 0; /* піднімає блок вгору */
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(15px);
+
+    border-radius:30px;
+    padding:10px;
+
+    display:grid; /* сітка */
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:25px;
+
+    position:relative;
+    z-index:5;
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.08),
+               0 2px 10px rgba(0,0,0,0.04);
+}
+
+/* один елемент feature */
+.feature{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:15px;
+    border-radius:20px;
+    transition:0.3s;
+}
+
+/* hover ефект feature */
+.feature:hover{
+    background:#f5f9ff;
+    transform:translateY(-4px);
+}
+
+/* іконка feature */
+.feature-icon{
+
+    width:58px;
+    height:58px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#1e90ff,#5bc0ff);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:24px;
+    color:white;
+
+    box-shadow:0 10px 20px rgba(30,144,255,0.25);
+}
+
+/* текст feature */
+.feature h4{
+    font-size:18px;
+    margin-bottom:5px;
+}
+
+.feature p{
+    color:#666;
+    font-size:14px;
+}
+
+/* ===== ОСНОВНИЙ КОНТЕЙНЕР ===== */
+.container{
+
+    width:90%;
+    max-width:1300px;
+    margin:auto;
+    padding:110px 0;
+}
+
+/* верх секції (заголовок + кнопка) */
+.section-top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    margin-bottom:55px;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+/* заголовок секції */
+.section-title{
+    font-size:52px;
+    line-height:1.1;
+    margin-bottom:12px;
+    font-weight:700;
+}
+
+/* підзаголовок */
+.section-subtitle{
+    color:#666;
+    font-size:18px;
+}
+
+/* кнопка секції */
+.section-btn{
+    text-decoration:none;
+    color:#1e90ff;
+    font-weight:600;
+}
+
+/* ===== TOURS (карточки турів) ===== */
+.tours{
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:35px;
+}
+
+/* одна карточка туру */
+.tour{
+
+    background:white;
+    border-radius:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.07);
+    transition:0.4s;
+}
+
+/* hover карточки */
+.tour:hover{
+    transform:translateY(-12px);
+    box-shadow:0 18px 40px rgba(0,0,0,0.12);
+}
+
+/* картинка туру */
+.tour-image{
+    height:270px;
+    overflow:hidden;
+}
+
+/* img всередині */
+.tour-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:0.5s;
+}
+
+/* zoom ефект */
+.tour:hover img{
+    transform:scale(1.08);
+}
+
+/* контент туру */
+.tour-content{
+    padding:28px;
+}
+
+/* назва туру */
+.tour-content h3{
+    font-size:32px;
+    margin-bottom:12px;
+    font-weight:700;
+}
+
+/* інформація (дні + ціна) */
+.tour-info{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:28px;
+}
+
+/* дні */
+.days{
+    color:#666;
+    font-weight:500;
+}
+
+/* ціна */
+.price{
+    background:linear-gradient(135deg,#1e90ff,#46b9ff);
+    color:white;
+    padding:12px 20px;
+    border-radius:16px;
+    font-weight:700;
+    box-shadow:0 10px 20px rgba(30,144,255,0.25);
+}
+
+/* ===== СТАТИСТИКА ===== */
+.stats{
+
+    margin-top:90px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+}
+
+/* один блок статистики */
+.stat{
+
+    background:white;
+    border-radius:28px;
+    padding:40px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.06);
+    transition:0.3s;
+}
+
+/* hover stat */
+.stat:hover{
+    transform:translateY(-8px);
+}
+
+/* число */
+.stat h2{
+    font-size:52px;
+    color:#1e90ff;
+    margin-bottom:10px;
+}
+
+/* текст */
+.stat p{
+    color:#666;
+}
+
+/* ===== адаптивність ===== */
+@media(max-width:900px){
+
+    .hero{
+        padding:0 30px;
+        height:85vh;
+    }
+
+    .hero-content h1{
+        font-size:58px;
+    }
+
+    .section-title{
+        font-size:38px;
+    }
+
+    .container{
+        width:92%;
+    }
+
+    .hero-features{
+        width:92%;
+    }
+}
+
+</style>
 
 </head>
-<body> 
+
+<body>
+
+<!-- HEADER -->
 
 <div id="header"></div>
-<script>
-fetch('header.html').then(r=>r.text()).then(t=>document.getElementById('header').innerHTML=t);
-</script>
 
-<div class="container">
+<script src="JS/app.js"></script>
 
-    <h2>Пошук туру</h2>
-    <form>
-        <input type="text" placeholder="Куди" required>
-        <input type="date" required>
-        <button type="submit">Знайти</button>
-    </form>
+<!-- HERO -->
 
-    <h2>Популярні тури</h2>
-    <div class="tours">
-        <div class="tour">
-            <h3>Париж</h3>
-            <p>5 днів у Франції</p>
-            <p>Ціна: 500€</p>
+<section class="hero">
+
+    <div class="hero-content">
+
+        <h1>
+            Відкрий світ
+            <span>разом з нами</span>
+        </h1>
+
+        <p>
+            Подорожуй легко, комфортно та за найкращими цінами.
+            Знайди свою наступну пригоду вже сьогодні.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="tours.html" class="btn btn-primary">
+                Знайти тур
+            </a>
+
+            <a href="tours.html" class="btn btn-secondary">
+                Детальніше
+            </a>
+
         </div>
 
-        <div class="tour">
-            <h3>Рим</h3>
-            <p>7 днів в Італії</p>
-            <p>Ціна: 650€</p>
+    </div>
+
+</section>
+
+<!-- FEATURES -->
+
+<div class="hero-features">
+
+    <div class="feature">
+
+        <div class="feature-icon">✈️</div>
+
+        <div>
+            <h4>Найкращі тури</h4>
+            <p>Популярні напрямки по всьому світу</p>
         </div>
 
-        <div class="tour">
-            <h3>Барселона</h3>
-            <p>6 днів в Іспанії</p>
-            <p>Ціна: 600€</p>
+    </div>
+
+    <div class="feature">
+
+        <div class="feature-icon">💳</div>
+
+        <div>
+            <h4>Вигідні ціни</h4>
+            <p>Знижки та гарячі пропозиції</p>
         </div>
+
+    </div>
+
+    <div class="feature">
+
+        <div class="feature-icon">🌍</div>
+
+        <div>
+            <h4>50+ країн</h4>
+            <p>Подорожі у будь-яку точку світу</p>
+        </div>
+
+    </div>
+
+    <div class="feature">
+
+        <div class="feature-icon">⭐</div>
+
+        <div>
+            <h4>10 000+ клієнтів</h4>
+            <p>Тисячі задоволених туристів</p>
+        </div>
+
     </div>
 
 </div>
 
+<!-- TOURS -->
+
+<div class="container">
+
+    <div class="section-top">
+
+        <div>
+
+            <h2 class="section-title">
+                Популярні напрямки
+            </h2>
+
+            <p class="section-subtitle">
+                Обери свою ідеальну подорож
+            </p>
+
+        </div>
+
+        <a href="tours.html" class="section-btn">
+            Переглянути всі →
+        </a>
+
+    </div>
+
+    <div class="tours">
+
+
+
+<!-- FOOTER -->
 
 <div id="footer"></div>
+
 <script>
-fetch('footer.html').then(r=>r.text()).then(t=>document.getElementById('footer').innerHTML=t);
+
+fetch('footer.html')
+.then(r => r.text())
+.then(t => document.getElementById('footer').innerHTML = t);
+
 </script>
 
 <script>
@@ -125,17 +518,22 @@ let user = localStorage.getItem("currentUser");
 let btn = document.getElementById("authBtn");
 
 if (user) {
+
     btn.innerText = "👤 " + user;
+
     btn.href = "#";
 
-    // опціонально — вихід при кліку
     btn.onclick = function() {
+
         if (confirm("Вийти з акаунту?")) {
+
             localStorage.removeItem("currentUser");
+
             location.reload();
         }
     }
 }
+
 </script>
 
 </body>

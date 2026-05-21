@@ -2,6 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
+    <script src="JS/validation.js"></script>
     <title>Вхід</title>
 
     <style>
@@ -144,44 +145,41 @@ function toggleMode() {
     }
 }
 
-function login() {
-
+async function login() {
+    if (!validateLoginForm(isRegister)) return;
     let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
+    const password = document.getElementById("password").value;
 
-    if (!email || !password) {
-        alert("Заповніть всі поля!");
-        return;
+    if (!email || !password) { alert("Заповніть всі поля!"); return; }
+
+    if (!isRegister) {
+        try {
+            const resp = await fetch('admins.json');
+            const admins = await resp.json();
+            const admin = admins.find(a => a.email === email && a.password === password);
+            if (admin) {
+                localStorage.setItem("currentUser", email);
+                localStorage.setItem("isAdmin", "true");
+                window.location.href = "index.html";
+                return;
+            }
+        } catch(e) {}
     }
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
-
     if (isRegister) {
-        // перевірка чи користувач існує
-        let exists = users.find(u => u.email === email);
-
-        if (exists) {
-            alert("Користувач вже існує!");
-            return;
-        }
-
+        if (users.find(u => u.email === email)) { alert("Користувач вже існує!"); return; }
         users.push({ email, password });
         localStorage.setItem("users", JSON.stringify(users));
-
-        alert("Реєстрація успішна!");
-
         localStorage.setItem("currentUser", email);
-        
+        localStorage.removeItem("isAdmin");
         window.location.href = "index.html";
-
-
     } else {
-        let user = users.find(u => u.email === email && u.password === password);
-
+        const user = users.find(u => u.email === email && u.password === password);
         if (user) {
-            alert("Вхід успішний!");
             localStorage.setItem("currentUser", email);
-            window.location.href = "index.html"; // повернення на головну
+            localStorage.removeItem("isAdmin");
+            window.location.href = "index.html";
         } else {
             alert("Невірний email або пароль!");
         }

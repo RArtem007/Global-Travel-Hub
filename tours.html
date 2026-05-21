@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="JS/ui.js"></script>
   <title>Тури — Travel System</title>
   <style>
     body { font-family: Arial, sans-serif; background: #f0f2f5; color: #333; }
@@ -78,9 +78,8 @@
 <body>
 
 <div id="header"></div>
-<script>
-fetch('header.html').then(r=>r.text()).then(t=>document.getElementById('header').innerHTML=t);
-</script>
+<script src="JS/app.js"></script>
+
 
 <div class="page-wrap">
   <div class="page-title">Тури</div>
@@ -174,33 +173,17 @@ fetch('header.html').then(r=>r.text()).then(t=>document.getElementById('header')
 fetch('footer.html').then(r=>r.text()).then(t=>document.getElementById('footer').innerHTML=t);
 </script>
 
-<script>
+<script type="module">
+// ===== ЗМІНЕНО: імпорт Supabase замість fetch('ID.json') =====
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const supabase = createClient(
+  'https://njzygyuxisnstpydadsz.supabase.co',
+  'sb_publishable_1YigaD3BnGQohHM8ly-peA_yB-0oYbG'
+);
+// ===== КІНЕЦЬ ЗМІН =====
+
 let TOURS = [];
-
-import { createClient } from '@supabase/supabase-js'
-NEXT_PUBLIC_SUPABASE_URL=https://njzygyuxisnstpydadsz.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_1YigaD3BnGQohHM8ly-peA_yB-0oYbG
-const supabase = createClient('https://njzygyuxisnstpydadsz.supabase.co', 'sb_publishable_1YigaD3BnGQohHM8ly-peA_yB-0oYbG')
-
-const { data, error } = await supabase
-  .from('characters')
-  .select()
-  TOURS = data;
-
-
-/*fetch('ID.json')
-  .then(res => res.json())
-  .then(data => {
-    TOURS = data;
-    filterTours();
-  });
-  
-*/
 let currentPage = 1;
-
-function stars(r) {
-  return '★'.repeat(Math.round(r)) + '☆'.repeat(5 - Math.round(r));
-}
 
 function gradientFor(type) {
   const map = {
@@ -213,7 +196,20 @@ function gradientFor(type) {
   return map[type] || 'linear-gradient(135deg,#74aee8,#1a6b9a)';
 }
 
-function filterTours() {
+// ===== ЗМІНЕНО: async функція що тягне дані з Supabase =====
+async function loadTours() {
+  showLoading('toursGrid');
+  const { data, error } = await supabase.from('tours').select('*');
+  if (error) { showError('toursGrid'); return; }
+  if (!data.length) { showEmpty('toursGrid', 'Турів не знайдено'); return; }
+
+  TOURS = data;
+  filterTours();
+
+}
+// ===== КІНЕЦЬ ЗМІН =====
+
+window.filterTours = function() {
   const q = (document.getElementById('searchInput').value || '').toLowerCase();
   const country = document.getElementById('fCountry').value;
   const type = document.getElementById('fType').value;
@@ -233,11 +229,11 @@ function filterTours() {
     return true;
   });
 
-  if (sort === 'price_asc')  res.sort((a,b) => a.price - b.price);
+  if (sort === 'price_asc')       res.sort((a,b) => a.price - b.price);
   else if (sort === 'price_desc') res.sort((a,b) => b.price - a.price);
   else if (sort === 'rating')     res.sort((a,b) => b.rating - a.rating);
   else if (sort === 'popularity') res.sort((a,b) => b.reviews - a.reviews);
-  else if (sort === 'date')       res.sort((a,b) => a.date.split('.').reverse().join('').localeCompare(b.date.split('.').reverse().join('')));
+  else if (sort === 'date')       res.sort((a,b) => new Date(a.date) - new Date(b.date));
 
   document.getElementById('countDisplay').textContent = res.length;
 
@@ -248,13 +244,13 @@ function filterTours() {
   document.getElementById('toursGrid').innerHTML = slice.map(t => `
     <div class="tour-card">
       <div class="tour-img" style="background:${gradientFor(t.type)}">
-        <span>${t.emoji}</span>
+        <!-- ===== ЗМІНЕНО: t.emoji → t.image (назва колонки в Supabase) ===== -->
+        <span>${t.image || ''}</span>
       </div>
       <div class="tour-body">
         <div class="tour-title">${t.name}</div>
         <div class="tour-sub">${t.days} днів · ${t.country} · ${t.type}</div>
         <div class="tour-desc">${t.desc}</div>
-
         <div class="tour-footer">
           <div class="tour-price">${t.price}€</div>
           <button class="btn-detail" onclick="window.location.href='tour.html?id=${t.id}'">Детальніше →</button>
@@ -281,9 +277,9 @@ function renderPagination(pages) {
   p.innerHTML = h;
 }
 
-function goPage(n) { currentPage = n; filterTours(); window.scrollTo(0, 0); }
+window.goPage = function(n) { currentPage = n; filterTours(); window.scrollTo(0, 0); }
 
-function resetFilters() {
+window.resetFilters = function() {
   document.getElementById('searchInput').value = '';
   document.getElementById('fCountry').value = '';
   document.getElementById('fType').value = '';
@@ -292,12 +288,13 @@ function resetFilters() {
   document.getElementById('durMin').value = '';
   document.getElementById('durMax').value = '';
   document.getElementById('fDate').value = '';
-  document.querySelectorAll('.filter-check input').forEach(c => c.checked = false);
   currentPage = 1;
   filterTours();
 }
 
-filterTours();
+// ===== ЗМІНЕНО: loadTours() замість filterTours() — спочатку тягнемо дані =====
+loadTours();
+// ===== КІНЕЦЬ ЗМІН =====
 </script>
 
 </body>

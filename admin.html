@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="JS/ui.js"></script>
+  <title>Адмін-панель — Travel System</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f2f5; color: #333; margin: 0; }
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .page-title { font-size: 1.5rem; font-weight: 700; color: #1a3a5c; margin-bottom: 0.5rem; }
+    .page-sub { color: #888; font-size: 13px; margin-bottom: 1.5rem; }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+    .tab-btn {
+      padding: 9px 22px; border-radius: 6px; border: 1px solid #ddd;
+      background: #fff; cursor: pointer; font-size: 14px; font-weight: 600; color: #555;
+    }
+    .tab-btn.active { background: #2980b9; color: #fff; border-color: #2980b9; }
+
+    /* ===== FORM ===== */
+    .form-card {
+      background: #fff; border-radius: 10px; border: 1px solid #e0e0e0;
+      padding: 1.5rem; margin-bottom: 1.5rem;
+    }
+    .form-card h3 { font-size: 15px; font-weight: 700; color: #1a3a5c; margin-bottom: 1rem; margin-top: 0; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 12px; color: #666; font-weight: 600; }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 8px 10px; border: 1px solid #ddd; border-radius: 5px;
+      font-size: 13px; background: #fff; font-family: inherit;
+    }
+    .form-group textarea { resize: vertical; min-height: 70px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 1rem; }
+    .btn-green { background: #27ae60; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 600; }
+    .btn-green:hover { background: #219a52; }
+    .btn-gray { background: #95a5a6; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+    .btn-gray:hover { background: #7f8c8d; }
+
+    /* ===== TABLE ===== */
+    .table-card { background: #fff; border-radius: 10px; border: 1px solid #e0e0e0; overflow: hidden; }
+    .table-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.2rem; border-bottom: 1px solid #e0e0e0; }
+    .table-header h3 { margin: 0; font-size: 15px; font-weight: 700; color: #1a3a5c; }
+    .search-input { padding: 7px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 13px; width: 200px; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #f8f9fa; }
+    th { text-align: left; padding: 10px 12px; font-size: 12px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #e0e0e0; }
+    td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafbfc; }
+
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .badge-beach { background: #d5f5e3; color: #1e8449; }
+    .badge-excursion { background: #d6eaf8; color: #1a5276; }
+    .badge-mountain { background: #d5f0d5; color: #1d6a1d; }
+    .badge-cruise { background: #d6e4f7; color: #154360; }
+    .badge-health { background: #e8daef; color: #6c3483; }
+
+    .btn-edit { background: #2980b9; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+    .btn-edit:hover { background: #1f6fa0; }
+    .btn-delete { background: #e74c3c; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: 4px; }
+    .btn-delete:hover { background: #c0392b; }
+
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #27ae60; color: #fff; padding: 12px 24px;
+      border-radius: 8px; font-size: 14px; font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.3s; z-index: 9999;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { background: #e74c3c; }
+
+    .no-access {
+      text-align: center; padding: 80px 20px; color: #e74c3c;
+      font-size: 18px; font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="header"></div>
+<script>
+fetch('header.html').then(r=>r.text()).then(t=>{
+    document.getElementById('header').innerHTML=t;
+    const user = localStorage.getItem("currentUser");
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const btn = document.getElementById("authBtn");
+    if (user && btn) {
+        btn.innerText = (isAdmin ? "👑 " : "👤 ") + user;
+        btn.href = "#";
+        btn.onclick = function(e) {
+            e.preventDefault();
+            if (confirm("Вийти з акаунту?")) {
+                localStorage.removeItem("currentUser");
+                localStorage.removeItem("isAdmin");
+                location.reload();
+            }
+        };
+        if (isAdmin) {
+            const adminBtn = document.getElementById("adminBtn");
+            if (adminBtn) adminBtn.style.display = "inline-block";
+        }
+    }
+});
+</script>
+
+<div class="page-wrap" id="mainContent">
+  <div class="no-access">🔒 Перевірка доступу...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const supabase = createClient(
+  'https://njzygyuxisnstpydadsz.supabase.co',
+  'sb_publishable_1YigaD3BnGQohHM8ly-peA_yB-0oYbG'
+);
+
+// Перевірка доступу
+const isAdmin = localStorage.getItem("isAdmin") === "true";
+const user = localStorage.getItem("currentUser");
+const main = document.getElementById("mainContent");
+
+if (!isAdmin || !user) {
+  main.innerHTML = `<div class="no-access">🔒 Доступ заборонено.<br><a href="login.html" style="color:#3498db;font-size:14px;">Увійти як адміністратор</a></div>`;
+} else {
+  renderAdmin();
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show" + (isError ? " error" : "");
+  setTimeout(() => t.className = "toast", 2800);
+}
+
+let TOURS = [];
+let editingId = null;
+let activeTab = "list"; // "list" | "add"
+
+async function renderAdmin() {
+  await loadTours();
+  buildUI();
+}
+
+async function loadTours() {
+  showLoading('tabContent');
+  const { data, error } = await supabase.from('tours').select('*').order('id');
+  if (error) { showToast("Помилка завантаження: " + error.message, true); return; }
+  TOURS = data || [];
+}
+
+function buildUI() {
+  main.innerHTML = `
+    <div class="page-title">⚙️ Адмін-панель</div>
+    <div class="page-sub">Авторизовано як: <b>${user}</b></div>
+
+    <div class="tabs">
+      <button class="tab-btn ${activeTab==='list'?'active':''}" onclick="window._switchTab('list')">📋 Список турів</button>
+      <button class="tab-btn ${activeTab==='add'?'active':''}" onclick="window._switchTab('add')">➕ Додати тур</button>
+    </div>
+
+    <div id="tabContent"></div>
+  `;
+
+  renderTab();
+}
+
+function renderTab() {
+  const tc = document.getElementById("tabContent");
+  if (activeTab === "add") {
+    tc.innerHTML = renderForm(null);
+    bindForm();
+  } else {
+    tc.innerHTML = renderTable();
+    bindTable();
+  }
+}
+
+window._switchTab = function(tab) {
+  activeTab = tab;
+  editingId = null;
+  buildUI();
+};
+
+// ===== FORM =====
+function renderForm(tour) {
+  const t = tour || {};
+  const title = tour ? "✏️ Редагування туру" : "➕ Додати новий тур";
+  return `
+    <div class="form-card">
+      <h3>${title}</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Назва туру *</label>
+          <input id="f_name" type="text" value="${t.name||''}" placeholder="Наприклад: Рим за 7 днів">
+        </div>
+        <div class="form-group">
+          <label>Країна *</label>
+          <select id="f_country">
+            ${['Франція','Італія','Іспанія','Греція','Туреччина','Єгипет'].map(c=>`<option ${t.country===c?'selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Тип туру *</label>
+          <select id="f_type">
+            ${['Пляжний','Екскурсійний','Гірський','Круїз','Оздоровчий'].map(c=>`<option ${t.type===c?'selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ціна (€) *</label>
+          <input id="f_price" type="number" value="${t.price||''}" placeholder="500">
+        </div>
+        <div class="form-group">
+          <label>Кількість днів *</label>
+          <input id="f_days" type="number" value="${t.days||''}" placeholder="7">
+        </div>
+        <div class="form-group">
+          <label>Дата виїзду</label>
+          <input id="f_date" type="date" value="${t.date||''}">
+        </div>
+        <div class="form-group">
+          <label>Зображення</label>
+          <input id="f_image" type="text" value="${t.image||''}" placeholder="🏖️">
+        </div>
+        <div class="form-group">
+          <label>Рейтинг (1-5)</label>
+          <input id="f_rating" type="number" step="0.1" min="1" max="5" value="${t.rating||''}">
+        </div>
+        <div class="form-group full">
+          <label>Опис *</label>
+          <textarea id="f_desc" placeholder="Короткий опис туру...">${t.desc||''}</textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-green" onclick="window._saveTour()">💾 Зберегти</button>
+        <button class="btn-gray" onclick="window._switchTab('list')">Скасувати</button>
+      </div>
+    </div>
+  `;
+}
+
+function bindForm() {}
+
+window._saveTour = async function() {
+  const name = document.getElementById("f_name").value.trim();
+  const country = document.getElementById("f_country").value;
+  const type = document.getElementById("f_type").value;
+  const price = parseFloat(document.getElementById("f_price").value);
+  const days = parseInt(document.getElementById("f_days").value);
+  const date = document.getElementById("f_date").value;
+  const image = document.getElementById("f_image").value.trim();
+  const rating = parseFloat(document.getElementById("f_rating").value) || null;
+  const desc = document.getElementById("f_desc").value.trim();
+
+  if (!name || !price || !days || !desc) {
+    showToast("Заповніть обов'язкові поля!", true);
+    return;
+  }
+
+  const payload = { name, country, type, price, days, date: date||null, image, rating, desc };
+
+  let error;
+  if (editingId) {
+    ({ error } = await supabase.from('tours').update(payload).eq('id', editingId));
+  } else {
+    ({ error } = await supabase.from('tours').insert([payload]));
+  }
+
+  if (error) { showToast("Помилка: " + error.message, true); return; }
+  showToast(editingId ? "✅ Тур оновлено!" : "✅ Тур додано!");
+  editingId = null;
+  activeTab = "list";
+  await loadTours();
+  buildUI();
+};
+
+// ===== TABLE =====
+function renderTable() {
+  const badgeMap = {
+    'Пляжний':'badge-beach','Екскурсійний':'badge-excursion',
+    'Гірський':'badge-mountain','Круїз':'badge-cruise','Оздоровчий':'badge-health'
+  };
+  const rows = TOURS.map(t => `
+    <tr>
+      <td><b>${t.id}</b></td>
+      <td>${t.image||''} ${t.name}</td>
+      <td>${t.country}</td>
+      <td><span class="badge ${badgeMap[t.type]||''}">${t.type}</span></td>
+      <td><b>${t.price}€</b></td>
+      <td>${t.days} дн.</td>
+      <td>${t.date||'—'}</td>
+      <td>
+        <button class="btn-edit" onclick="window._editTour(${t.id})">✏️ Ред.</button>
+        <button class="btn-delete" onclick="window._deleteTour(${t.id})">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Всі тури (${TOURS.length})</h3>
+        <input class="search-input" type="text" placeholder="Пошук..." oninput="window._filterTable(this.value)">
+      </div>
+      <table id="toursTable">
+        <thead>
+          <tr>
+            <th>ID</th><th>Назва</th><th>Країна</th><th>Тип</th>
+            <th>Ціна</th><th>Днів</th><th>Дата</th><th>Дії</th>
+          </tr>
+        </thead>
+        <tbody>${rows||'<tr><td colspan="8" style="text-align:center;color:#aaa;padding:2rem;">Турів не знайдено</td></tr>'}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function bindTable() {}
+
+window._filterTable = function(q) {
+  const rows = document.querySelectorAll("#toursTable tbody tr");
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q.toLowerCase()) ? "" : "none";
+  });
+};
+
+window._editTour = function(id) {
+  const tour = TOURS.find(t => t.id === id);
+  if (!tour) return;
+  editingId = id;
+  activeTab = "add";
+  const tc = document.getElementById("tabContent");
+  // Switch tab visually
+  document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", i===1));
+  tc.innerHTML = renderForm(tour);
+};
+
+window._deleteTour = async function(id) {
+  if (!confirm("Видалити цей тур?")) return;
+  const { error } = await supabase.from('tours').delete().eq('id', id);
+  if (error) { showToast("Помилка: " + error.message, true); return; }
+  showToast("🗑️ Тур видалено");
+  await loadTours();
+  buildUI();
+};
+</script>
+
+<div id="footer"></div>
+<script>
+fetch('footer.html').then(r=>r.text()).then(t=>document.getElementById('footer').innerHTML=t);
+</script>
+
+</body>
+</html>

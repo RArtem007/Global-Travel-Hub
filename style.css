@@ -1,0 +1,117 @@
+/* css/styles.css */
+
+/* Reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Body */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f8;
+    color: #333;
+}
+
+/* Контейнер */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+/* Заголовки */
+h2 { color: #2c3e50; }
+
+/* Кнопка синя — є скрізь */
+.btn-blue {
+    background: #2980b9;
+    color: #fff;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.btn-blue:hover { background: #1f6fa0; }
+
+/* Кнопка скидання */
+.btn-reset {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #2980b9;
+    color: #2980b9;
+    background: #fff;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.btn-reset:hover { background: #eaf4fb; }
+
+/* Картка (біла з тінню) */
+.card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    padding: 1.2rem;
+}
+
+/* Loading / Empty / Error стани */
+.state-box {
+    text-align: center;
+    padding: 48px 20px;
+    color: #bbb;
+    font-size: 14px;
+}
+
+.burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+}
+.burger span {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+}
+
+/* ===== АДАПТИВНІСТЬ ХЕДЕРА ===== */
+@media (max-width: 768px) {
+    header { padding: 12px 16px; }
+    header h1 { font-size: 20px; }
+    .logo { width: 50px; margin-right: 10px; }
+
+    .burger { display: flex; }
+
+    nav {
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: #2c3e50;
+        padding: 16px;
+        z-index: 99;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    nav.open { display: flex; }
+    nav a { width: 100%; padding: 10px 12px; }
+    .login-btn, .admin-btn { width: 100%; text-align: center; margin-top: 4px; }
+}
+
+/* ===== АДАПТИВНІСТЬ ЗАГАЛЬНА ===== */
+@media (max-width: 768px) {
+    .container { padding: 16px; }
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; }
+    .tours-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+    h2 { font-size: 1.3rem; }
+    .btn-blue { width: 100%; }
+}
