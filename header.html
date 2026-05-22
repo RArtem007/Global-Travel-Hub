@@ -114,8 +114,8 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // ===== Кнопка входу / користувач =====
-    let user = localStorage.getItem("currentUser");
-    let btn = document.getElementById("authBtn");
+    const user = localStorage.getItem("currentUser");
+    const btn = document.getElementById("authBtn");
 
     if (user) {
         btn.innerText = "👤 " + user;
@@ -128,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
+        // Перевірка на адмінку
         if (typeof isAdmin !== "undefined" && isAdmin) {
             const adminBtn = document.getElementById("adminBtn");
             if (adminBtn) adminBtn.style.display = "inline-block";
@@ -135,13 +136,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ===== Підсвітка активної сторінки =====
-    let currentPage = window.location.pathname.split("/").pop();
-    if (currentPage === "") currentPage = "index.html";
+    let currentPage = window.location.pathname.split("/").pop().toLowerCase();
+    if (!currentPage || currentPage === "") currentPage = "index.html";
 
     const links = document.querySelectorAll("nav a");
 
     links.forEach(link => {
-        const linkPage = link.getAttribute("href");
+        let linkPage = link.getAttribute("href").split("/").pop().toLowerCase();
         link.classList.remove("active");
         if (linkPage === currentPage) {
             link.classList.add("active");
