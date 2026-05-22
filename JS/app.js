@@ -4,17 +4,13 @@ fetch('header.html')
     document.getElementById('header').innerHTML = t;
 
     // ===== Підсвітка активної сторінки =====
-    let currentPage = window.location.pathname.split("/").pop().toLowerCase();
-    if (!currentPage || !currentPage.endsWith(".html")) {
-        currentPage = "index.html";
+    let activePage = window.location.pathname.split("/").pop().toLowerCase();
+    if (!activePage || !activePage.endsWith(".html")) {
+        activePage = "index.html";
     }
-
     document.querySelectorAll("nav a").forEach(link => {
         const linkPage = link.getAttribute("href").split("/").pop().toLowerCase();
-        link.classList.remove("active");
-        if (linkPage === currentPage) {
-            link.classList.add("active");
-        }
+        if (linkPage === activePage) link.classList.add("active");
     });
 
     // ===== Кнопка входу =====
