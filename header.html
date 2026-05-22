@@ -113,19 +113,30 @@
 
 <script>
 let user = localStorage.getItem("currentUser");
+
 let btn = document.getElementById("authBtn");
 
 if (user) {
     btn.innerText = "👤 " + user;
     btn.href = "#";
 
+    // опціонально — вихід при кліку
     btn.onclick = function() {
         if (confirm("Вийти з акаунту?")) {
             localStorage.removeItem("currentUser");
             location.reload();
         }
     }
+    if (isAdmin) {
+        const adminBtn = document.getElementById("adminBtn");
+        if (adminBtn) adminBtn.style.display = "inline-block";
+    }
 }
+
+function toggleMenu() {
+    document.getElementById('mainNav').classList.toggle('open');
+}
+
 
 // Активна сторінка
 const currentPage = window.location.pathname.split("/").pop();
@@ -140,7 +151,7 @@ links.forEach(link => {
     }
 });
 
-function toggleMenu() {
-    document.getElementById('mainNav').classList.toggle('open');
-}
+
 </script>
+
+
