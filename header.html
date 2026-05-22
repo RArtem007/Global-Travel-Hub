@@ -98,7 +98,7 @@
         <span></span>
     </div>
     
-    <nav>
+    <nav id="mainNav">
         <a href="index.html" >Головна</a>
         <a href="tours.html">Тури</a>
         <a href="b.html">Про нас</a>
@@ -112,46 +112,45 @@
 
 
 <script>
-let user = localStorage.getItem("currentUser");
+document.addEventListener("DOMContentLoaded", function() {
+    // ===== Кнопка входу / користувач =====
+    let user = localStorage.getItem("currentUser");
+    let btn = document.getElementById("authBtn");
 
-let btn = document.getElementById("authBtn");
+    if (user) {
+        btn.innerText = "👤 " + user;
+        btn.href = "#";
 
-if (user) {
-    btn.innerText = "👤 " + user;
-    btn.href = "#";
+        btn.onclick = function() {
+            if (confirm("Вийти з акаунту?")) {
+                localStorage.removeItem("currentUser");
+                location.reload();
+            }
+        }
 
-    // опціонально — вихід при кліку
-    btn.onclick = function() {
-        if (confirm("Вийти з акаунту?")) {
-            localStorage.removeItem("currentUser");
-            location.reload();
+        if (typeof isAdmin !== "undefined" && isAdmin) {
+            const adminBtn = document.getElementById("adminBtn");
+            if (adminBtn) adminBtn.style.display = "inline-block";
         }
     }
-    if (isAdmin) {
-        const adminBtn = document.getElementById("adminBtn");
-        if (adminBtn) adminBtn.style.display = "inline-block";
-    }
-}
 
+    // ===== Підсвітка активної сторінки =====
+    let currentPage = window.location.pathname.split("/").pop();
+    if (currentPage === "") currentPage = "index.html";
+
+    const links = document.querySelectorAll("nav a");
+
+    links.forEach(link => {
+        const linkPage = link.getAttribute("href");
+        link.classList.remove("active");
+        if (linkPage === currentPage) {
+            link.classList.add("active");
+        }
+    });
+});
+
+// ===== Функція для бургер-меню =====
 function toggleMenu() {
     document.getElementById('mainNav').classList.toggle('open');
 }
-
-
-// Активна сторінка
-const currentPage = window.location.pathname.split("/").pop();
-
-const links = document.querySelectorAll("nav a");
-
-links.forEach(link => {
-    const linkPage = link.getAttribute("href");
-
-    if (linkPage === currentPage) {
-        link.classList.add("active");
-    }
-});
-
-
 </script>
-
-
