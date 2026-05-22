@@ -511,30 +511,5 @@ fetch('footer.html')
 
 </script>
 
-<script>
-
-let user = localStorage.getItem("currentUser");
-
-let btn = document.getElementById("authBtn");
-
-if (user) {
-
-    btn.innerText = "👤 " + user;
-
-    btn.href = "#";
-
-    btn.onclick = function() {
-
-        if (confirm("Вийти з акаунту?")) {
-
-            localStorage.removeItem("currentUser");
-
-            location.reload();
-        }
-    }
-}
-
-</script>
-
 </body>
 </html>
