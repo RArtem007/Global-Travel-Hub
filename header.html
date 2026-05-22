@@ -99,7 +99,7 @@
     </div>
     
     <nav>
-        <a href="index.html" class="active">Головна</a>
+        <a href="index.html" >Головна</a>
         <a href="tours.html">Тури</a>
         <a href="b.html">Про нас</a>
         <a href="contacts.html">Контакти</a>
@@ -132,6 +132,40 @@ if (user) {
         if (adminBtn) adminBtn.style.display = "inline-block";
     }
 }
+
+function toggleMenu() {
+    document.getElementById('mainNav').classList.toggle('open');
+}
+</script>
+
+<script>
+let user = localStorage.getItem("currentUser");
+let btn = document.getElementById("authBtn");
+
+if (user) {
+    btn.innerText = "👤 " + user;
+    btn.href = "#";
+
+    btn.onclick = function() {
+        if (confirm("Вийти з акаунту?")) {
+            localStorage.removeItem("currentUser");
+            location.reload();
+        }
+    }
+}
+
+// Активна сторінка
+const currentPage = window.location.pathname.split("/").pop();
+
+const links = document.querySelectorAll("nav a");
+
+links.forEach(link => {
+    const linkPage = link.getAttribute("href");
+
+    if (linkPage === currentPage) {
+        link.classList.add("active");
+    }
+});
 
 function toggleMenu() {
     document.getElementById('mainNav').classList.toggle('open');
