@@ -110,47 +110,7 @@
 </header>
 
 
-
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // ===== Кнопка входу / користувач =====
-    const user = localStorage.getItem("currentUser");
-    const btn = document.getElementById("authBtn");
-
-    if (user) {
-        btn.innerText = "👤 " + user;
-        btn.href = "#";
-
-        btn.onclick = function() {
-            if (confirm("Вийти з акаунту?")) {
-                localStorage.removeItem("currentUser");
-                location.reload();
-            }
-        }
-
-        // Перевірка на адмінку
-        if (typeof isAdmin !== "undefined" && isAdmin) {
-            const adminBtn = document.getElementById("adminBtn");
-            if (adminBtn) adminBtn.style.display = "inline-block";
-        }
-    }
-
-    // ===== Підсвітка активної сторінки =====
-    let currentPage = window.location.pathname.split("/").pop().toLowerCase();
-    if (!currentPage || currentPage === "") currentPage = "index.html";
-
-    const links = document.querySelectorAll("nav a");
-
-    links.forEach(link => {
-        let linkPage = link.getAttribute("href").split("/").pop().toLowerCase();
-        link.classList.remove("active");
-        if (linkPage === currentPage) {
-            link.classList.add("active");
-        }
-    });
-});
-
-// ===== Функція для бургер-меню =====
 function toggleMenu() {
     document.getElementById('mainNav').classList.toggle('open');
 }
