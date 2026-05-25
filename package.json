@@ -1,0 +1,19 @@
+{
+  "name": "global-travel-hub",
+  "version": "1.0.0",
+  "description": "Travel System – unit tests",
+  "scripts": {
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "collectCoverageFrom": [
+      "JS/**/*.js"
+    ]
+  }
+}
